@@ -4,7 +4,7 @@ from functools import lru_cache
 class Settings(BaseSettings):
   PROJECT_NAME: str = "Focus Read API"
   API_V1_STR: str = "/api/v1"
-  API_VERSION: str = "1.0.0"
+  API_VERSION: str = "0.0.1"
 
   # Security
   SECRET_KEY: str
@@ -19,6 +19,9 @@ class Settings(BaseSettings):
 
   # OpenAi
   OPENAI_API_KEY: str
+
+  # Google Books
+  GOOGLE_BOOKS_API_KEY: str
 
   # Apple Sign In
   APPLE_BUNDLE_ID: str

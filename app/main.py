@@ -23,5 +23,5 @@ app.add_middleware(
 )
 
 @app.get("/")
-def root():
-  return {"message": "Welcome to the Apple Sign-In API!"} 
+async def root():
+    return {"message": "Welcome to the Focus Read API"} 
