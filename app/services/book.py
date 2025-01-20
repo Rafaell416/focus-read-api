@@ -11,7 +11,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 import re
-import json
 
 settings = get_settings()
 client = OpenAI(api_key=settings.OPENAI_API_KEY)
@@ -60,37 +59,38 @@ def search_books(query: str, lang: Optional[str] = None, max_results: int = 10):
 	}
 
 def get_book_details(book_id: str):
-    """Get detailed information about a specific book"""
-    url = f"https://www.googleapis.com/books/v1/volumes/{book_id}"
-    params = {"key": settings.GOOGLE_BOOKS_API_KEY}
-    
-    response = requests.get(url, params=params)
-    response.raise_for_status()
-    return _parse_volume_info(response.json())
+	"""Get detailed information about a specific book"""
+	url = f"https://www.googleapis.com/books/v1/volumes/{book_id}"
+	params = {"key": settings.GOOGLE_BOOKS_API_KEY}
+	
+	response = requests.get(url, params=params)
+	response.raise_for_status()
+	return _parse_volume_info(response.json())
 
 
 def parse_toc_to_json(toc_text):
-    lines = toc_text.split("\n")
-    toc = []
+	lines = toc_text.split("\n")
+	toc = []
 
-    for line in lines:
-        # Determine type and extract details
-        if re.match(r"^Part\s\d+", line, re.IGNORECASE):  # Section title
-            toc.append({"type": "section", "title": line.strip(), "page": None})
-        elif re.match(r"^\d+", line):  # Chapter title
-            match = re.match(r"^(\d+)\s+(.*?)\s+(\d+)$", line)
-            if match:
-                toc.append({
-                    "type": "chapter",
-                    "title": match.group(2).strip(),
-                    "page": int(match.group(3))
-                })
-        elif "Timeline" in line or "Introduction" in line:  # Intro
-            toc.append({"type": "intro", "title": line.strip(), "page": None})
-        else:  # Other
-            toc.append({"type": "other", "title": line.strip(), "page": None})
+	for line in lines:
+			# Determine type and extract details
+			if re.match(r"^Part\s\d+", line, re.IGNORECASE):  # Section title
+					toc.append({"type": "section", "title": line.strip(), "page": None})
+			elif re.match(r"^\d+", line):  # Chapter title
+					match = re.match(r"^(\d+)\s+(.*?)\s+(\d+)$", line)
+					if match:
+							toc.append({
+									"type": "chapter",
+									"number": int(match.group(1)),
+									"title": match.group(2).strip(),
+									"page": int(match.group(3))
+							})
+			elif "Timeline" in line or "Introduction" in line:  # Intro
+					toc.append({"type": "intro", "title": line.strip(), "page": None})
+			else:  # Other
+					toc.append({"type": "other", "title": line.strip(), "page": None})
 
-    return {"toc": toc}
+	return {"toc": toc}
 
 
 def scrape_toc_from_bn(book_title, author_name):

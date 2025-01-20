@@ -8,7 +8,7 @@ settings = get_settings()
 
 app = FastAPI(
   title=settings.PROJECT_NAME, 
-  version=settings.API_VERSION, 
+  version=settings.VERSION, 
   openapi_url=f"{settings.API_V1_STR}/openapi.json"
 )
 

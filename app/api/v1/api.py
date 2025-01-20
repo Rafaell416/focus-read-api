@@ -1,8 +1,8 @@
 from fastapi import APIRouter
-from app.api.v1.endpoints import auth
-from app.api.v1.endpoints import books
+from app.api.v1.endpoints import books, reading_sessions, auth
 
 api_router = APIRouter()
 
 api_router.include_router(auth.router, prefix="/auth", tags=["authentication"])
 api_router.include_router(books.router, prefix="/books", tags=["books"])
+api_router.include_router(reading_sessions.router, prefix="/reading-sessions", tags=["reading-sessions"])
