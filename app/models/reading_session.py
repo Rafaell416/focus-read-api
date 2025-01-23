@@ -47,4 +47,5 @@ class ReadingSession(Base):
   intervals_count = Column(Integer, default=0)
 
   intervals = relationship("Interval", back_populates="session")
+  notes = relationship("Notes", back_populates="reading_session")
   user = relationship("User", back_populates="reading_sessions") 

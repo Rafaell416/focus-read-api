@@ -12,3 +12,4 @@ class User(Base):
   
   book_progresses = relationship("BookProgress", back_populates="user")
   reading_sessions = relationship("ReadingSession", back_populates="user")
+  notes = relationship("Notes", back_populates="user")
