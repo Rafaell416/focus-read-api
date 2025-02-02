@@ -11,6 +11,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 import re
+import os
 
 settings = get_settings()
 client = OpenAI(api_key=settings.OPENAI_API_KEY)
@@ -103,9 +104,21 @@ def scrape_toc_from_bn(book_title, author_name):
 	chrome_options.add_argument("--window-size=1920,1080")
 	chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36") 
 
+
+	if 'GOOGLE_CHROME_BIN' in os.environ:
+		# Heroku environment
+		chrome_options.binary_location = os.environ.get('GOOGLE_CHROME_BIN')
+		service = Service(
+			executable_path=os.environ.get('CHROMEDRIVER_PATH')
+		)
+	else:
+		# Local environment
+		service = Service(ChromeDriverManager().install())
+
 	# Set up the Chrome WebDriver
 	driver = webdriver.Chrome(
-		service=Service(ChromeDriverManager().install()), options=chrome_options
+		service=service,
+		options=chrome_options
 	)
 
 	try:
@@ -170,4 +183,3 @@ def scrape_toc_from_bn(book_title, author_name):
 	finally:
 		# Close the WebDriver
 		driver.quit()
-

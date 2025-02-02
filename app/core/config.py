@@ -30,11 +30,15 @@ class Settings(BaseSettings):
     
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> str:
-        heroku_database_url = os.getenv("DATABASE_URL")
-        if heroku_database_url:
-            if heroku_database_url.startswith("postgres://"):
-                return heroku_database_url.replace("postgres://", "postgresql://", 1)
-            return heroku_database_url
+        # Check if we're running on Heroku (DATABASE_URL will be set)
+        database_url = os.getenv("DATABASE_URL")
+        if database_url:
+            # Handle Heroku's postgres:// URLs
+            if database_url.startswith("postgres://"):
+                return database_url.replace("postgres://", "postgresql://", 1)
+            return database_url
+            
+        # Use local database settings if no DATABASE_URL is set
         return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}/{self.POSTGRES_DB}"
     
     class Config:
